@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+#
+# Canopy
+# Tommy Johnson <tom@thebitcrusher.net>
+#
+# A light weight Amazon Web Services
+# IAM keypair manager
+#
+
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'canopy'))
+require 'optparse'
+
+identity = Canopy::Identity.new
+
+options = OptionParser.new do |opts|
+  opts.banner = 'usage: canopy [OPTIONS]'
+
+  opts.on('-l', '--list', 'Show identities information') do |ident|
+    identity.list_all
+  end
+
+  opts.on('-a', '--assume', 'Assumes an identity') do
+    identity.assume(ident)
+  end
+
+  opts.on('-c', '--create-identity', 'Create a new identity') do
+    identity.create
+  end
+
+  opts.on('-r', '--remove-identity', 'Remove an existing identity') do
+    identity.remove
+  end
+
+  opts.on('-P', '--purge', 'Remove all identities') do
+
+  end
+
+  opts.on('--ssh-private-key FILE', 'Private SSH key to use for decryption') do |file|
+    Canopy.config.ssh_private_key = file
+  end
+
+  opts.on('--ssh-public-key FILE', 'Public SSH key to use for encryption') do |file|
+    Canopy.config.ssh_public_key = file
+  end
+
+  opts.on('--reset-config', 'Reset configuration properties') do
+    Canopy.config.reset!
+  end
+
+  opts.on('--init', 'Initialize Canopy configuration') do
+    Canopy.config.init!
+  end
+
+  opts.on_tail('-v', '--version', 'Prints version information') do
+    puts Canopy::VERSION
+  end
+
+  opts.on_tail('-h', '--help', 'Show this help menu') do
+    puts opts
+  end
+end.parse!
